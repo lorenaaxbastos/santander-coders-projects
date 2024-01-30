@@ -6,7 +6,7 @@ In the dynamic realm of soccer, both in Brazil and internationally, the position
 
 ### Data
 
-To address this question, a JSON file containing all the data from the 2019 Brazilian Championship will be provided.
+To address this question, a bunch of JSON files containing all the data from 2006-2023 Brazilian Championships will be provided.
 
 ### Expected Outcome
 
