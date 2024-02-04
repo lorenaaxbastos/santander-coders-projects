@@ -8,9 +8,16 @@ import json
 import pandas as pd
 
 
-def errors_catch(url_):
+def captura_de_erros(url_: str) -> requests.models.Response:
+    """
+    Realiza a requisição HTTP GET e testa possíveis erros.
+    Retorna a resposta da requisição.
+    """
     try:
-        response_ = session.get(url_, timeout=(5, 10))
+        adaptador = HTTPAdapter(max_retries=3)
+        sessao = requests.Session()
+        sessao.mount(url, adaptador)
+        resposta_ = sessao.get(url_, timeout=(5, 10))
     except Timeout:
         print("O request teve timeout")
         erros.write(f"O request teve timeout. | {url_}\n")
@@ -24,10 +31,7 @@ def errors_catch(url_):
         print("Ocorreu outro tipo de erro")
         erros.write(f"Ocorreu outro tipo de erro: {e} | {url_}\n")
     else:
-        return response_
-
-
-api_adapter = HTTPAdapter(max_retries=3)
+        return resposta_
 
 erros = open(f"{os.path.abspath("datasets")}\\erros.txt", "w")
 totais = open(f"{os.path.abspath("datasets")}\\totais.txt", "w")
@@ -73,29 +77,23 @@ else:
 for url in urls:
     entidade = url.split("/")[-1]
     dados = []
+    resposta = captura_de_erros(url)
 
-    session = requests.Session()
-    session.mount(url, api_adapter)
-    response = errors_catch(url)
-
-    if response is None:
+    if resposta is None:
         continue
-    elif response.status_code == 200:
-        total = response.json()["total"]
+    elif resposta.status_code == 200:
+        total = resposta.json()["total"]
         totais.write(f"{entidade.title()}: {total}\n")
         print(f"\nTotal de {entidade}: {total}")
 
         for i in range(0, total + 1, 100):
             pagina = f"{url}/?limit=100&offset={i}&"
+            resposta = captura_de_erros(pagina)
 
-            session = requests.Session()
-            session.mount(pagina, api_adapter)
-            response = errors_catch(pagina)
-
-            if response is None:
+            if resposta is None:
                 continue
 
-            conteudo = response.text
+            conteudo = resposta.text
 
             while "\xa0" in conteudo:
                 conteudo = conteudo.replace("\xa0", " ")
@@ -106,12 +104,12 @@ for url in urls:
             if i % 1000 == 0:
                 print(f"Request {i} realizado com sucesso...")
     else:
-        erros.write(f"Não foi possível fazer o request de {url}. Status code: ({response.status_code})\n")
+        erros.write(f"Não foi possível fazer o request de {url}. Status code: ({resposta.status_code})\n")
         continue
 
     df = pd.DataFrame(dados)
     df.to_excel(f"{os.path.abspath("datasets")}\\{entidade}.xlsx", engine="xlsxwriter", index=False)
-    print(f"Planilha excel de {entidade} criada com sucesso.")
+    print(f"Planilha excel de {entidade} criada com sucesso.\n\n")
 
 erros.close()
 totais.close()
