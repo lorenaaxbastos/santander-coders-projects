@@ -1,7 +1,6 @@
 import os
 import requests
 from requests.adapters import HTTPAdapter
-from requests.exceptions import Timeout
 from requests.exceptions import ConnectionError
 from requests.exceptions import HTTPError
 import json
@@ -14,27 +13,27 @@ def captura_de_erros(url_: str) -> requests.models.Response:
     Retorna a resposta da requisição.
     """
     try:
-        adaptador = HTTPAdapter(max_retries=3)
+        adaptador = HTTPAdapter(max_retries=5)
         sessao = requests.Session()
         sessao.mount(url, adaptador)
-        resposta_ = sessao.get(url_, timeout=(5, 10))
-    except Timeout:
-        print("O request teve timeout")
-        erros.write(f"O request teve timeout. | {url_}\n")
+        resposta_ = sessao.get(url_)
     except HTTPError as http_err:
-        print("Ocorreu um erro HTTP")
-        erros.write(f"Ocorreu um erro HTTP: {http_err} | {url_}\n")
+        print(f"Ocorreu um erro HTTP: {http_err}")
+        erros.write(url)
     except ConnectionError as ce:
-        print("Ocorreu um erro de conexão")
-        erros.write(f"Ocorreu um erro de conexão: {ce} | {url_}\n")
+        print(f"Ocorreu um erro de conexão: {ce}")
+        erros.write(url)
     except Exception as e:
-        print("Ocorreu outro tipo de erro")
-        erros.write(f"Ocorreu outro tipo de erro: {e} | {url_}\n")
+        print(f"Ocorreu outro tipo de erro: {e}")
+        erros.write(url)
     else:
+        if resposta_.status_code != 200:
+            resposta_ = None
         return resposta_
 
+
 erros = open(f"{os.path.abspath("datasets")}\\erros.txt", "w")
-totais = open(f"{os.path.abspath("datasets")}\\totais.txt", "w")
+totais = open(f"{os.path.abspath("datasets")}\\totais.txt", "a")
 
 urls_salic = ["http://api.salic.cultura.gov.br/v1/projetos",
               "http://api.salic.cultura.gov.br/v1/propostas",
@@ -109,7 +108,7 @@ for url in urls:
 
     df = pd.DataFrame(dados)
     df.to_excel(f"{os.path.abspath("datasets")}\\{entidade}.xlsx", engine="xlsxwriter", index=False)
-    print(f"Planilha excel de {entidade} criada com sucesso.\n\n")
+    print(f"\nPlanilha excel de {entidade} criada com sucesso.\n\n")
 
 erros.close()
 totais.close()
