@@ -15,17 +15,17 @@ def captura_de_erros(url_: str) -> requests.models.Response:
     try:
         adaptador = HTTPAdapter(max_retries=5)
         sessao = requests.Session()
-        sessao.mount(url, adaptador)
+        sessao.mount(url_, adaptador)
         resposta_ = sessao.get(url_)
     except HTTPError as http_err:
         print(f"Ocorreu um erro HTTP: {http_err}")
-        erros.write(url)
+        erros.write(url_)
     except ConnectionError as ce:
         print(f"Ocorreu um erro de conexão: {ce}")
-        erros.write(url)
+        erros.write(url_)
     except Exception as e:
         print(f"Ocorreu outro tipo de erro: {e}")
-        erros.write(url)
+        erros.write(url_)
     else:
         if resposta_.status_code != 200:
             resposta_ = None
