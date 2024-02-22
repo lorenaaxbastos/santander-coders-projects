@@ -69,3 +69,7 @@ Realizar uma análise exploratória de dados (EDA) no conjunto de dados da Lei R
 - Jupyter Notebook para documentação e visualização interativa.
 
 ## Fontes 
+
+- [Instrução normativa MINC nº 1, de 10 de abril de 2023](https://www.conjur.com.br/dl/in/instrucao-normativa-cultura-oab-rouanet.pdf)
+- [Portal do Incentivo](https://portaldoincentivo.com.br/visitors/incentive_laws/1)
+- [ntendendo a Lei Rouanet, por Carolina Bassin](https://www.crc.org.br/_eventos/2018/897.pdf)
