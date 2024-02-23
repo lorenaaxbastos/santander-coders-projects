@@ -47,14 +47,12 @@ Realizar uma análise exploratória de dados (EDA) no conjunto de dados da Lei R
 - Análise dos projetos voltados para as minorias.
 - Avaliação da representatividade por área e por região geográfica.
 
-**4.5. Distribuição de recursos**
+**4.4. Distribuição de recursos**
 
 - Análise da distribuição de recursos por área, estados, região, minoria e enquadramento.
 - Exploração da distribuição de recursos financeiros ao longo do tempo.
-- Identificação dos projetos que receberam a maior e menor quantidade de financiamento.
-- Análise da dificuldade na captação de recursos.
 
-**4.6. Influência de grandes projetos**
+**4.5. Influência de grandes projetos**
 
 - Identificação e análise de grandes projetos que receberam um montante significativo de financiamento. 
 
